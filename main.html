@@ -24,7 +24,7 @@
       color:var(--text);
     }
 
-    /* Full-width layout */
+    /* full width */
     .wrap{max-width:none;margin:0 auto;padding:26px}
     header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
     h1{font-size:16px;margin:0;letter-spacing:.2px}
@@ -54,7 +54,15 @@
       padding:10px 12px;
       outline:none;
     }
-    textarea{min-height:90px;resize:vertical}
+
+    /* Notes “fit” */
+    textarea{
+      width:100%;
+      min-height:110px;
+      line-height:1.45;
+      resize:vertical;
+    }
+
     button{cursor:pointer}
     button.primary{
       border:none;
@@ -108,7 +116,6 @@
     .small{font-size:12px;color:var(--muted)}
     .actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 
-    /* Modal: less transparent */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.62);
@@ -215,6 +222,12 @@
       }
     };
 
+    const DEFAULT_LOC = {
+      CA: { city:"Los Angeles", zip:"90007" },
+      TX: { city:"Austin",      zip:"78701" },
+      FL: { city:"Tampa",       zip:"33602" }
+    };
+
     const CHECKLIST = [
       {key:"safety", title:"Check safety and move to a safe location", detail:"Hazards on, check injuries, move off-road if safe. Call 911 if needed."},
       {key:"photos", title:"Take photos and record key details", detail:"Vehicles, plates, damage, road context, and any relevant signage."},
@@ -304,9 +317,8 @@
 
     function computedRating(provider){
       const added = getReviews(provider.id);
-      if(added.length === 0){
-        return {rating: provider.baseRating, count: provider.reviewCount};
-      }
+      if(added.length === 0) return {rating: provider.baseRating, count: provider.reviewCount};
+
       const baseTotal = provider.baseRating * provider.reviewCount;
       const addedTotal = added.reduce((s,r)=>s + r.stars, 0);
       const count = provider.reviewCount + added.length;
@@ -343,6 +355,13 @@
         const list = local.filter(p=>p.type===type).sort(rank).slice(0,3);
         return {type, list};
       });
+    }
+
+    function applyDefaultLocationForState(state){
+      const d = DEFAULT_LOC[state];
+      if(!d) return;
+      APP.location.city = d.city;
+      APP.location.zip  = d.zip;
     }
 
     function render(){
@@ -499,7 +518,7 @@
       `;
     }
 
-    // ---- Reviews modal
+    // Reviews modal
     let modalProviderId = null;
 
     function openModal(providerId){
@@ -546,7 +565,12 @@
     function bind(){
       const stateSel = $("#stateSel");
       if(stateSel){
-        stateSel.onchange = (e)=>{ APP.location.state = e.target.value; save(); };
+        stateSel.onchange = (e)=>{
+          APP.location.state = e.target.value;
+          applyDefaultLocationForState(APP.location.state);  // <-- auto-fill city/zip
+          save();
+        };
+
         $("#cityIn").oninput = (e)=>{ APP.location.city = e.target.value; save(); };
         $("#zipIn").oninput  = (e)=>{ APP.location.zip  = e.target.value; save(); };
 
@@ -583,7 +607,9 @@
       };
     }
 
-    render();
+    // Ensure initial state uses defaults if someone cleared fields previously
+    applyDefaultLocationForState(APP.location.state);
+    save();
   </script>
 </body>
 </html>
