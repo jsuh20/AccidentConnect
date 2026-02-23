@@ -1,27 +1,589 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            color: white;
-            font-size: 48px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AccidentConnect Demo</title>
+  <style>
+    :root{
+      --bg:#0f1216;
+      --panel:#151a20;
+      --panel2:#10151b;
+      --text:#e7edf6;
+      --muted:#9aa7b6;
+      --border:rgba(255,255,255,.10);
+      --accent:#a7c7ff;
+      --good:#9ff3c6;
+      --warn:#ffd79a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #0d1014, var(--bg));
+      color:var(--text);
+    }
+
+    /* Full-width layout */
+    .wrap{max-width:none;margin:0 auto;padding:26px}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+    h1{font-size:16px;margin:0;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.4}
+    .pill{font-size:12px;color:var(--muted);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+    .grid{display:grid;grid-template-columns: 1.1fr .9fr; gap:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px 0;font-size:13px;color:#d9e4f5}
+    .muted{color:var(--muted);font-size:12px;line-height:1.45}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .col{display:flex;flex-direction:column;gap:10px}
+    .sep{height:1px;background:var(--border);margin:10px 0}
+
+    input, select, textarea, button{
+      font:inherit;
+      color:var(--text);
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }
+    textarea{min-height:90px;resize:vertical}
+    button{cursor:pointer}
+    button.primary{
+      border:none;
+      background: rgba(167,199,255,.18);
+      color:var(--text);
+      font-weight:700;
+    }
+    button.ghost{background:transparent}
+    button:disabled{opacity:.55;cursor:not-allowed}
+
+    .badge{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+    }
+    .badge.verified{border-color:rgba(159,243,198,.35);color:var(--good);background:rgba(159,243,198,.10)}
+    .badge.note{border-color:rgba(167,199,255,.35);color:var(--accent);background:rgba(167,199,255,.08)}
+    .badge.warn{border-color:rgba(255,215,154,.35);color:var(--warn);background:rgba(255,215,154,.08)}
+
+    .progressWrap{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--border);overflow:hidden}
+    .bar > div{height:100%;width:0%;background:rgba(167,199,255,.55)}
+
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      display:flex;gap:10px;align-items:flex-start;
+      background: rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+    }
+    .item h3{margin:0;font-size:13px}
+    .item p{margin:4px 0 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+    .chk{width:18px;height:18px;margin-top:2px}
+
+    .provider{
+      display:flex;gap:12px;justify-content:space-between;align-items:flex-start;
+      background: rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+    }
+    .provider h3{margin:0;font-size:13px}
+    .provider .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+    .stars{font-size:12px;color:var(--warn)}
+    .small{font-size:12px;color:var(--muted)}
+    .actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+
+    /* Modal: less transparent */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(3px);
+      display:none; align-items:center; justify-content:center;
+      padding:16px;
+    }
+    .modal{
+      width:min(620px, 100%);
+      background: #11161c;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.60);
+    }
+    .modalTitle{font-size:13px;margin:0}
+    .modal .row{justify-content:space-between}
+    .modal .close{padding:8px 10px;border-radius:10px}
+    .reviewCard{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px;
+      background: rgba(255,255,255,.03);
+    }
+    .reviewCard .top{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
 </head>
 <body>
-    <h1>Hello World! 👋</h1>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>AccidentConnect — Demo</h1>
+        <div class="sub">
+          Interactive checklist • Verified provider matching • State-specific guidance • Reviews
+        </div>
+      </div>
+      <div class="row">
+        <span class="pill" id="sessionPill">Session: —</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="left"></section>
+      <section class="card" id="right"></section>
+    </div>
+  </div>
+
+  <!-- Reviews modal -->
+  <div class="modalBack" id="modalBack" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="row">
+        <div>
+          <p class="modalTitle" id="modalTitle" style="margin:0 0 4px 0;">Reviews</p>
+          <div class="muted" id="modalSub"></div>
+        </div>
+        <button class="ghost close" id="modalClose">Close</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="col">
+        <div class="reviewCard">
+          <div class="muted" style="margin-bottom:8px"><strong>Add a review</strong></div>
+          <div class="row">
+            <label class="muted">Stars</label>
+            <select id="reviewStars">
+              <option value="5">5</option><option value="4">4</option><option value="3">3</option>
+              <option value="2">2</option><option value="1">1</option>
+            </select>
+          </div>
+          <textarea id="reviewText" placeholder="Short review (demo)"></textarea>
+          <div class="row" style="justify-content:flex-end">
+            <button class="primary" id="reviewAddBtn">Add review</button>
+          </div>
+        </div>
+
+        <div class="muted"><strong>Recent reviews</strong></div>
+        <div class="col" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LS_KEY = "ac_demo_simple_v1";
+    const uid = () => Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+    const esc = (s) => String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+
+    const STATE_GUIDANCE = {
+      CA: { name:"California",
+        legal:["Comparative fault: compensation may be reduced by fault percentage.","Avoid admitting fault at the scene; stick to facts."],
+        insurance:["Document damage and contact your insurer promptly.","Collect witness contact info when available."]
+      },
+      TX: { name:"Texas",
+        legal:["“51% rule”: if you are more than 51% at fault, you may not recover damages.","Don’t admit fault; let insurers/authorities determine liability."],
+        insurance:["Get witness info if possible and safe.","Start the claim process as soon as you can."]
+      },
+      FL: { name:"Florida",
+        legal:["PIP applies; timely medical evaluation can matter for benefits eligibility.","Avoid speculation; document facts and symptoms accurately."],
+        insurance:["Save receipts (tow, rental, etc.) and store photos safely.","Ask insurer about PIP steps and coverage."]
+      }
+    };
+
+    const CHECKLIST = [
+      {key:"safety", title:"Check safety and move to a safe location", detail:"Hazards on, check injuries, move off-road if safe. Call 911 if needed."},
+      {key:"photos", title:"Take photos and record key details", detail:"Vehicles, plates, damage, road context, and any relevant signage."},
+      {key:"exchange", title:"Exchange information", detail:"Name, phone, insurance, policy #, plate #, and witness contacts."},
+      {key:"report", title:"Report if needed", detail:"Injuries, major damage, or disputes may require police reporting."},
+      {key:"next", title:"Next steps", detail:"File claim and connect to towing/repair/medical/legal/rental help as needed."}
+    ];
+
+    const PROVIDERS = [
+      {id:"ca_tow_1", state:"CA", city:"Los Angeles", zip:"90007", type:"Towing", name:"Trojan Tow & Recovery", verified:true, phone:"(213) 555-0141", baseRating:4.7, reviewCount:128},
+      {id:"ca_body_1", state:"CA", city:"Los Angeles", zip:"90007", type:"Body Shop", name:"Downtown Auto Body", verified:true, phone:"(213) 555-0199", baseRating:4.5, reviewCount:201},
+      {id:"ca_law_1", state:"CA", city:"Los Angeles", zip:"90007", type:"Attorney", name:"Westside Injury Law", verified:true, phone:"(310) 555-0107", baseRating:4.6, reviewCount:340},
+      {id:"ca_med_1", state:"CA", city:"Los Angeles", zip:"90007", type:"Medical Clinic", name:"LA Urgent Care Partners", verified:true, phone:"(213) 555-0174", baseRating:4.3, reviewCount:97},
+      {id:"ca_rent_1", state:"CA", city:"Los Angeles", zip:"90007", type:"Rental Car", name:"QuickRide Rentals", verified:true, phone:"(213) 555-0188", baseRating:4.1, reviewCount:62},
+
+      {id:"tx_tow_1", state:"TX", city:"Austin", zip:"78701", type:"Towing", name:"Capitol City Towing", verified:true, phone:"(512) 555-0123", baseRating:4.4, reviewCount:156},
+      {id:"tx_body_1", state:"TX", city:"Austin", zip:"78701", type:"Body Shop", name:"Lone Star Collision", verified:true, phone:"(512) 555-0190", baseRating:4.6, reviewCount:220},
+      {id:"tx_law_1", state:"TX", city:"Austin", zip:"78701", type:"Attorney", name:"Hill Country Legal", verified:true, phone:"(512) 555-0168", baseRating:4.2, reviewCount:89},
+      {id:"tx_med_1", state:"TX", city:"Austin", zip:"78701", type:"Medical Clinic", name:"Austin Injury Clinic", verified:true, phone:"(512) 555-0185", baseRating:4.3, reviewCount:71},
+      {id:"tx_rent_1", state:"TX", city:"Austin", zip:"78701", type:"Rental Car", name:"ATX Rentals", verified:true, phone:"(512) 555-0118", baseRating:4.0, reviewCount:54},
+
+      {id:"fl_tow_1", state:"FL", city:"Tampa", zip:"33602", type:"Towing", name:"Bay Tow Services", verified:true, phone:"(813) 555-0144", baseRating:4.5, reviewCount:181},
+      {id:"fl_body_1", state:"FL", city:"Tampa", zip:"33602", type:"Body Shop", name:"Tampa Collision Center", verified:true, phone:"(813) 555-0172", baseRating:4.4, reviewCount:102},
+      {id:"fl_law_1", state:"FL", city:"Tampa", zip:"33602", type:"Attorney", name:"Gulf Legal Group", verified:true, phone:"(813) 555-0103", baseRating:4.6, reviewCount:210},
+      {id:"fl_med_1", state:"FL", city:"Tampa", zip:"33602", type:"Medical Clinic", name:"SunCoast Injury Clinic", verified:true, phone:"(813) 555-0181", baseRating:4.4, reviewCount:133},
+      {id:"fl_rent_1", state:"FL", city:"Tampa", zip:"33602", type:"Rental Car", name:"Tampa Car Rentals", verified:true, phone:"(813) 555-0129", baseRating:4.1, reviewCount:60}
+    ];
+
+    const SERVICE_TYPES = ["Towing","Body Shop","Attorney","Medical Clinic","Rental Car"];
+
+    function defaultApp(){
+      return {
+        sessionId: uid(),
+        location: { state:"CA", city:"Los Angeles", zip:"90007" },
+        needs: Object.fromEntries(SERVICE_TYPES.map(t => [t, t==="Towing" || t==="Body Shop"])),
+        checklist: Object.fromEntries(CHECKLIST.map(s => [s.key,false])),
+        notes: "",
+        reviewsByProvider: {}
+      };
+    }
+
+    let APP = load();
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return defaultApp();
+        const parsed = JSON.parse(raw);
+        const base = defaultApp();
+        return merge(base, parsed);
+      }catch{
+        return defaultApp();
+      }
+    }
+
+    function merge(a,b){
+      if(b === null || b === undefined) return a;
+      if(Array.isArray(a) && Array.isArray(b)) return b;
+      if(typeof a !== "object" || typeof b !== "object") return (b ?? a);
+      const out = {...a};
+      for(const k of Object.keys(b)){
+        out[k] = (k in a) ? merge(a[k], b[k]) : b[k];
+      }
+      return out;
+    }
+
+    function save(){
+      localStorage.setItem(LS_KEY, JSON.stringify(APP));
+      render();
+    }
+
+    function checklistProgress(){
+      const vals = Object.values(APP.checklist);
+      const total = vals.length;
+      const done = vals.filter(Boolean).length;
+      return {done,total,pct: total ? Math.round(done/total*100) : 0};
+    }
+
+    function getReviews(providerId){
+      return APP.reviewsByProvider[providerId] || [];
+    }
+
+    function addReview(providerId, stars, text){
+      APP.reviewsByProvider[providerId] = APP.reviewsByProvider[providerId] || [];
+      APP.reviewsByProvider[providerId].unshift({stars, text, ts: Date.now()});
+    }
+
+    function computedRating(provider){
+      const added = getReviews(provider.id);
+      if(added.length === 0){
+        return {rating: provider.baseRating, count: provider.reviewCount};
+      }
+      const baseTotal = provider.baseRating * provider.reviewCount;
+      const addedTotal = added.reduce((s,r)=>s + r.stars, 0);
+      const count = provider.reviewCount + added.length;
+      const rating = (baseTotal + addedTotal) / count;
+      return {rating, count};
+    }
+
+    function stars(r){
+      const full = Math.round(r);
+      return "★".repeat(full) + "☆".repeat(Math.max(0,5-full));
+    }
+
+    function selectedNeedTypes(){
+      return Object.entries(APP.needs).filter(([,v])=>v).map(([k])=>k);
+    }
+
+    function matchProviders(){
+      const {state, city, zip} = APP.location;
+      const needs = selectedNeedTypes();
+
+      const local = PROVIDERS.filter(p =>
+        p.verified &&
+        p.state === state &&
+        (p.zip === zip || p.city.toLowerCase() === city.toLowerCase())
+      );
+
+      const rank = (a,b) => {
+        const ar = computedRating(a), br = computedRating(b);
+        if(br.rating !== ar.rating) return br.rating - ar.rating;
+        return br.count - ar.count;
+      };
+
+      return needs.map(type => {
+        const list = local.filter(p=>p.type===type).sort(rank).slice(0,3);
+        return {type, list};
+      });
+    }
+
+    function render(){
+      $("#sessionPill").textContent = "Session: " + APP.sessionId.slice(0,8);
+      renderLeft();
+      renderRight();
+      bind();
+    }
+
+    function renderLeft(){
+      const g = STATE_GUIDANCE[APP.location.state];
+      const prog = checklistProgress();
+
+      $("#left").innerHTML = `
+        <h2>Accident Checklist</h2>
+        <div class="muted">Step-by-step guidance you can follow immediately after an accident.</div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <label class="muted">State</label>
+          <select id="stateSel">
+            ${Object.keys(STATE_GUIDANCE).map(code => `
+              <option value="${code}" ${code===APP.location.state?"selected":""}>${STATE_GUIDANCE[code].name}</option>
+            `).join("")}
+          </select>
+
+          <label class="muted">City</label>
+          <input id="cityIn" value="${esc(APP.location.city)}" placeholder="City"/>
+
+          <label class="muted">ZIP</label>
+          <input id="zipIn" value="${esc(APP.location.zip)}" placeholder="ZIP" style="width:110px"/>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="progressWrap">
+          <span class="badge note"><strong>${prog.pct}%</strong>&nbsp;complete</span>
+          <span class="muted mono">${prog.done} / ${prog.total}</span>
+        </div>
+        <div class="bar" aria-label="progress bar"><div style="width:${clamp(prog.pct,0,100)}%"></div></div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="muted"><strong>State-specific guidance</strong></div>
+          <span class="badge warn">Updates by location</span>
+        </div>
+
+        <div class="row" style="align-items:flex-start">
+          <div style="flex:1">
+            <div class="muted"><strong>Legal</strong></div>
+            <ul class="muted" style="margin:6px 0 0 18px;padding:0">
+              ${g.legal.map(x=>`<li>${esc(x)}</li>`).join("")}
+            </ul>
+          </div>
+          <div style="flex:1">
+            <div class="muted"><strong>Insurance</strong></div>
+            <ul class="muted" style="margin:6px 0 0 18px;padding:0">
+              ${g.insurance.map(x=>`<li>${esc(x)}</li>`).join("")}
+            </ul>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="muted"><strong>Steps</strong></div>
+          <button class="ghost" id="markAllBtn">Mark all done</button>
+        </div>
+
+        <div class="list" style="margin-top:10px">
+          ${CHECKLIST.map(step => {
+            const done = !!APP.checklist[step.key];
+            return `
+              <div class="item">
+                <input class="chk stepChk" type="checkbox" data-step="${step.key}" ${done?"checked":""}/>
+                <div style="flex:1">
+                  <h3>${esc(step.title)}</h3>
+                  <p>${esc(step.detail)}</p>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="muted"><strong>Notes (optional)</strong></div>
+        <textarea id="notesArea" placeholder="Witness names, time, anything important...">${esc(APP.notes)}</textarea>
+      `;
+    }
+
+    function renderRight(){
+      const matches = matchProviders();
+
+      $("#right").innerHTML = `
+        <h2>Provider Matching</h2>
+        <div class="muted">Connects you to verified local towing, body shops, attorneys, medical clinics, and rental cars.</div>
+
+        <div class="sep"></div>
+
+        <div class="muted"><strong>Select what you need</strong></div>
+        <div class="row" style="margin-top:8px;gap:8px">
+          ${SERVICE_TYPES.map(t => `
+            <label class="badge" style="gap:8px">
+              <input type="checkbox" class="needChk" data-need="${esc(t)}" ${APP.needs[t]?"checked":""}/>
+              ${esc(t)}
+            </label>
+          `).join("")}
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="col">
+          ${selectedNeedTypes().length === 0 ? `
+            <div class="muted">Select at least one service above to view matches.</div>
+          ` : matches.map(group => `
+            <div class="col">
+              <div class="row" style="justify-content:space-between">
+                <span class="badge note"><strong>${esc(group.type)}</strong></span>
+                <span class="muted">Top verified local matches</span>
+              </div>
+              ${group.list.length === 0 ? `
+                <div class="muted">No demo providers found for this service in your area.</div>
+              ` : group.list.map(p => {
+                const r = computedRating(p);
+                return `
+                  <div class="provider">
+                    <div>
+                      <div class="row" style="gap:8px">
+                        <h3>${esc(p.name)}</h3>
+                        <span class="badge verified">Verified</span>
+                      </div>
+                      <div class="meta">
+                        <span class="stars">${stars(r.rating)} <span class="small">${r.rating.toFixed(2)} (${r.count})</span></span>
+                        <span class="small">📍 ${esc(p.city)} ${esc(p.zip)}</span>
+                        <span class="small">☎ ${esc(p.phone)}</span>
+                      </div>
+                      <div class="muted" style="margin-top:6px">
+                        Reviews you added: <span class="mono">${getReviews(p.id).length}</span>
+                      </div>
+                    </div>
+                    <div class="actions">
+                      <button class="primary openReviewsBtn" data-provider="${p.id}">Reviews</button>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+              <div class="sep"></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    // ---- Reviews modal
+    let modalProviderId = null;
+
+    function openModal(providerId){
+      modalProviderId = providerId;
+      const p = PROVIDERS.find(x=>x.id===providerId);
+      const r = computedRating(p);
+
+      $("#modalTitle").textContent = "Reviews — " + p.name;
+      $("#modalSub").innerHTML = `
+        <span class="badge verified">Verified</span>
+        <span class="badge note">${p.type}</span>
+        <span class="badge">${p.city} ${p.zip}</span>
+        <span class="badge warn">${stars(r.rating)} ${r.rating.toFixed(2)} (${r.count})</span>
+      `;
+
+      renderModalReviews();
+      $("#modalBack").style.display = "flex";
+      $("#modalBack").setAttribute("aria-hidden","false");
+      $("#reviewText").value = "";
+      $("#reviewStars").value = "5";
+    }
+
+    function closeModal(){
+      $("#modalBack").style.display = "none";
+      $("#modalBack").setAttribute("aria-hidden","true");
+      modalProviderId = null;
+    }
+
+    function renderModalReviews(){
+      const list = getReviews(modalProviderId);
+      $("#reviewList").innerHTML = list.length === 0
+        ? `<div class="muted">No reviews yet. Add the first one.</div>`
+        : list.slice(0,10).map(r => `
+            <div class="reviewCard">
+              <div class="top">
+                <span class="badge warn">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</span>
+                <span class="muted">${new Date(r.ts).toLocaleString()}</span>
+              </div>
+              <div class="muted" style="margin-top:6px">${esc(r.text)}</div>
+            </div>
+          `).join("");
+    }
+
+    function bind(){
+      const stateSel = $("#stateSel");
+      if(stateSel){
+        stateSel.onchange = (e)=>{ APP.location.state = e.target.value; save(); };
+        $("#cityIn").oninput = (e)=>{ APP.location.city = e.target.value; save(); };
+        $("#zipIn").oninput  = (e)=>{ APP.location.zip  = e.target.value; save(); };
+
+        $$(".stepChk").forEach(chk=>{
+          chk.onchange = (e)=>{ APP.checklist[e.target.dataset.step] = !!e.target.checked; save(); };
+        });
+
+        $("#markAllBtn").onclick = ()=>{
+          for(const k of Object.keys(APP.checklist)) APP.checklist[k] = true;
+          save();
+        };
+
+        $("#notesArea").oninput = (e)=>{ APP.notes = e.target.value; save(); };
+      }
+
+      $$(".needChk").forEach(chk=>{
+        chk.onchange = (e)=>{ APP.needs[e.target.dataset.need] = !!e.target.checked; save(); };
+      });
+
+      $$(".openReviewsBtn").forEach(btn=>{
+        btn.onclick = ()=> openModal(btn.dataset.provider);
+      });
+
+      $("#modalClose").onclick = closeModal;
+      $("#modalBack").onclick = (e)=>{ if(e.target.id === "modalBack") closeModal(); };
+
+      $("#reviewAddBtn").onclick = ()=>{
+        if(!modalProviderId) return;
+        const stars = clamp(parseInt($("#reviewStars").value,10)||5, 1, 5);
+        const text = ($("#reviewText").value || "").trim();
+        addReview(modalProviderId, stars, text || "Good experience.");
+        save();
+        renderModalReviews();
+      };
+    }
+
+    render();
+  </script>
 </body>
 </html>
