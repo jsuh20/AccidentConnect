@@ -409,9 +409,9 @@
       return out;
     }
 
-    function save(){
+    function save({ renderUI = true } = {}){
       localStorage.setItem(LS_KEY, JSON.stringify(APP));
-      render();
+      if(renderUI) render();
     }
 
     function checklistProgress(){
@@ -758,7 +758,10 @@
           save();
         };
 
-        $("#notesArea").oninput = (e)=>{ APP.notes = e.target.value; save(); };
+        $("#notesArea").oninput = (e)=>{
+          APP.notes = e.target.value;
+          save({ renderUI: false });   
+        };
       }
 
       $$(".needChk").forEach(chk=>{
