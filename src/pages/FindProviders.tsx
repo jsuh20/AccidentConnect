@@ -21,6 +21,12 @@ import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 
+interface Review {
+  author: string
+  rating: number
+  comment: string
+}
+
 interface Provider {
   id: string
   name: string
@@ -38,15 +44,34 @@ interface Provider {
   specialties: string[]
   openNow: boolean
   responseTime: string
+  reviews: Review[]
 }
 
 const mockProviders: Provider[] = [
-  { id: "1", name: "QuickTow 24/7 Emergency Service", type: "towing", rating: 4.9, reviewCount: 342, phone: "(555) 123-4567", address: "123 Main St", city: "Springfield", state: "CA", zipCode: "90210", distance: 2.3, verified: true, featured: true, specialties: ["Emergency Towing", "Flatbed", "Heavy Duty"], openNow: true, responseTime: "15-20 min" },
-  { id: "2", name: "Premier Auto Body & Collision", type: "bodyshop", rating: 4.8, reviewCount: 567, phone: "(555) 234-5678", address: "456 Oak Ave", city: "Springfield", state: "CA", zipCode: "90211", distance: 3.1, verified: true, featured: true, specialties: ["Insurance Claims", "Paint & Body", "Frame Repair"], openNow: true, responseTime: "Same day estimates" },
-  { id: "3", name: "Johnson & Associates Law Firm", type: "attorney", rating: 4.9, reviewCount: 189, phone: "(555) 345-6789", address: "789 Legal Plaza", city: "Springfield", state: "CA", zipCode: "90212", distance: 4.5, verified: true, featured: false, specialties: ["Personal Injury", "Car Accidents", "Insurance Disputes"], openNow: false, responseTime: "24hr consultation" },
-  { id: "4", name: "Springfield Medical Center - Urgent Care", type: "medical", rating: 4.7, reviewCount: 823, phone: "(555) 456-7890", address: "321 Health Blvd", city: "Springfield", state: "CA", zipCode: "90213", distance: 1.8, verified: true, featured: true, specialties: ["Accident Injuries", "X-Ray on Site", "Workers Comp"], openNow: true, responseTime: "Walk-ins welcome" },
-  { id: "5", name: "Elite Rental Cars", type: "rental", rating: 4.6, reviewCount: 445, phone: "(555) 567-8901", address: "654 Commerce Dr", city: "Springfield", state: "CA", zipCode: "90214", distance: 2.7, verified: true, featured: false, specialties: ["Insurance Replacements", "Same-Day Pickup", "Long-Term Rates"], openNow: true, responseTime: "2hr pickup" },
-  { id: "6", name: "Reliable Towing Services", type: "towing", rating: 4.5, reviewCount: 234, phone: "(555) 678-9012", address: "987 Industrial Way", city: "Springfield", state: "CA", zipCode: "90215", distance: 5.2, verified: true, featured: false, specialties: ["24/7 Service", "Motorcycle Towing", "Lockout Service"], openNow: true, responseTime: "20-30 min" },
+  { id: "1", name: "QuickTow 24/7 Emergency Service", type: "towing", rating: 4.9, reviewCount: 342, phone: "(555) 123-4567", address: "123 Main St", city: "Springfield", state: "CA", zipCode: "90210", distance: 2.3, verified: true, featured: true, specialties: ["Emergency Towing", "Flatbed", "Heavy Duty"], openNow: true, responseTime: "15-20 min", reviews: [
+    { author: "Marcus T.", rating: 5, comment: "Showed up in under 15 minutes after my accident on the highway. Driver was professional and careful with my car. Highly recommend!" },
+    { author: "Diane R.", rating: 5, comment: "Called at 2am and they were there within 20 minutes. Fair pricing and very courteous. Will definitely use again." },
+  ]},
+  { id: "2", name: "Premier Auto Body & Collision", type: "bodyshop", rating: 4.8, reviewCount: 567, phone: "(555) 234-5678", address: "456 Oak Ave", city: "Springfield", state: "CA", zipCode: "90211", distance: 3.1, verified: true, featured: true, specialties: ["Insurance Claims", "Paint & Body", "Frame Repair"], openNow: true, responseTime: "Same day estimates", reviews: [
+    { author: "Sandra K.", rating: 5, comment: "My car looks brand new after the repair. They handled all the insurance paperwork and kept me updated throughout the process." },
+    { author: "James L.", rating: 4, comment: "Great quality work. Took a few extra days but the paint match was perfect. Worth the wait." },
+  ]},
+  { id: "3", name: "Johnson & Associates Law Firm", type: "attorney", rating: 4.9, reviewCount: 189, phone: "(555) 345-6789", address: "789 Legal Plaza", city: "Springfield", state: "CA", zipCode: "90212", distance: 4.5, verified: true, featured: false, specialties: ["Personal Injury", "Car Accidents", "Insurance Disputes"], openNow: false, responseTime: "24hr consultation", reviews: [
+    { author: "Patricia M.", rating: 5, comment: "Attorney Johnson fought hard for my settlement after a rear-end collision. I received 3x more than the insurance company's first offer." },
+    { author: "Robert H.", rating: 5, comment: "Very responsive and kept me informed every step of the way. Settled my case in 4 months. Exceptional service." },
+  ]},
+  { id: "4", name: "Springfield Medical Center - Urgent Care", type: "medical", rating: 4.7, reviewCount: 823, phone: "(555) 456-7890", address: "321 Health Blvd", city: "Springfield", state: "CA", zipCode: "90213", distance: 1.8, verified: true, featured: true, specialties: ["Accident Injuries", "X-Ray on Site", "Workers Comp"], openNow: true, responseTime: "Walk-ins welcome", reviews: [
+    { author: "Angela W.", rating: 5, comment: "Got checked out here right after my accident. X-rays were done on site and the staff was compassionate and thorough." },
+    { author: "Kevin B.", rating: 4, comment: "Short wait time and the doctor took my neck pain seriously. Documented everything I needed for my insurance claim." },
+  ]},
+  { id: "5", name: "Elite Rental Cars", type: "rental", rating: 4.6, reviewCount: 445, phone: "(555) 567-8901", address: "654 Commerce Dr", city: "Springfield", state: "CA", zipCode: "90214", distance: 2.7, verified: true, featured: false, specialties: ["Insurance Replacements", "Same-Day Pickup", "Long-Term Rates"], openNow: true, responseTime: "2hr pickup", reviews: [
+    { author: "Lisa N.", rating: 5, comment: "Coordinated directly with my insurance for a replacement vehicle. Had a clean car ready within 2 hours of my accident." },
+    { author: "Tom G.", rating: 4, comment: "Good selection of vehicles and competitive rates. Staff was helpful explaining the insurance replacement process." },
+  ]},
+  { id: "6", name: "Reliable Towing Services", type: "towing", rating: 4.5, reviewCount: 234, phone: "(555) 678-9012", address: "987 Industrial Way", city: "Springfield", state: "CA", zipCode: "90215", distance: 5.2, verified: true, featured: false, specialties: ["24/7 Service", "Motorcycle Towing", "Lockout Service"], openNow: true, responseTime: "20-30 min", reviews: [
+    { author: "Chris P.", rating: 5, comment: "Towed my motorcycle after a slide on the freeway. They handled it with great care and arrived faster than expected." },
+    { author: "Maria S.", rating: 4, comment: "Reliable and honest pricing. Driver helped me stay calm after a stressful accident. Would recommend to anyone." },
+  ]},
 ]
 
 const providerTypes = [
@@ -75,11 +100,39 @@ const typeColors: Record<string, string> = {
 }
 
 export function FindProviders() {
+  const [providers, setProviders] = useState<Provider[]>(mockProviders)
   const [selectedType, setSelectedType] = useState<string>("all")
   const [searchZip, setSearchZip] = useState<string>("")
   const [sortBy, setSortBy] = useState<string>("distance")
+  const [reviewModalId, setReviewModalId] = useState<string | null>(null)
+  const [newAuthor, setNewAuthor] = useState<string>("")
+  const [newRating, setNewRating] = useState<number>(5)
+  const [newComment, setNewComment] = useState<string>("")
 
-  const filteredProviders = mockProviders
+  function openModal(id: string) {
+    setReviewModalId(id)
+    setNewAuthor("")
+    setNewRating(5)
+    setNewComment("")
+  }
+
+  function closeModal() {
+    setReviewModalId(null)
+  }
+
+  function submitReview() {
+    if (!newAuthor.trim() || !newComment.trim() || !reviewModalId) return
+    setProviders((prev) =>
+      prev.map((p) =>
+        p.id === reviewModalId
+          ? { ...p, reviews: [...p.reviews, { author: newAuthor.trim(), rating: newRating, comment: newComment.trim() }], reviewCount: p.reviewCount + 1 }
+          : p
+      )
+    )
+    closeModal()
+  }
+
+  const filteredProviders = providers
     .filter((p) => selectedType === "all" || p.type === selectedType)
     .sort((a, b) => {
       if (sortBy === "distance") return a.distance - b.distance
@@ -277,19 +330,46 @@ export function FindProviders() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-3 lg:flex-col lg:w-48">
-                      <Button className="flex-1">
-                        <Phone className="mr-2 h-4 w-4" />
-                        Call Now
+                    <div className="flex flex-col gap-4 lg:w-64">
+                      <div className="space-y-3">
+                        <p className="text-sm font-semibold text-foreground">Customer Reviews</p>
+                        <div className="h-[13rem] overflow-y-auto pr-1 space-y-3">
+                        {provider.reviews.map((review, i) => (
+                          <div key={i} className="rounded-lg bg-muted/50 p-3 text-sm">
+                            <div className="mb-1 flex items-center gap-2">
+                              <div className="flex">
+                                {Array.from({ length: review.rating }).map((_, j) => (
+                                  <Star key={j} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                ))}
+                              </div>
+                              <span className="font-medium text-foreground">{review.author}</span>
+                            </div>
+                            <p className="text-muted-foreground">{review.comment}</p>
+                          </div>
+                        ))}
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="w-full border-dashed"
+                        onClick={() => openModal(provider.id)}
+                      >
+                        + Add Review
                       </Button>
-                      <Button variant="outline" className="flex-1">
-                        <Mail className="mr-2 h-4 w-4" />
-                        Email
-                      </Button>
-                      <Button variant="outline" className="flex-1">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        Details
-                      </Button>
+                      <div className="flex gap-3 lg:flex-col">
+                        <Button className="flex-1">
+                          <Phone className="mr-2 h-4 w-4" />
+                          Call Now
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Mail className="mr-2 h-4 w-4" />
+                          Email
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Details
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -304,6 +384,65 @@ export function FindProviders() {
           </Button>
         </div>
       </div>
+
+      {reviewModalId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl bg-slate-800 p-6 shadow-xl">
+            <h2 className="mb-1 text-lg font-bold text-white">Write a Review</h2>
+            <p className="mb-4 text-sm text-slate-300">
+              {providers.find((p) => p.id === reviewModalId)?.name}
+            </p>
+
+            <div className="mb-4">
+              <label className="mb-1 block text-sm font-medium text-white">Your Name</label>
+              <Input
+                placeholder="e.g. John D."
+                value={newAuthor}
+                onChange={(e) => setNewAuthor(e.target.value)}
+                className="bg-slate-700 text-white placeholder:text-slate-400 border-slate-600"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-2 block text-sm font-medium text-white">Rating</label>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setNewRating(star)}
+                    className="focus:outline-none"
+                  >
+                    <Star
+                      className={`h-6 w-6 ${star <= newRating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="mb-1 block text-sm font-medium text-white">Your Review</label>
+              <textarea
+                className="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ring"
+                rows={4}
+                placeholder="Share your experience with this provider..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <Button className="flex-1" onClick={submitReview} disabled={!newAuthor.trim() || !newComment.trim()}>
+                Submit
+              </Button>
+              <Button variant="outline" className="flex-1 border-white text-white hover:bg-white/10" onClick={closeModal}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
