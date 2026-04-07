@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   AlertTriangle,
   Camera,
@@ -8,11 +8,13 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  HeartPulse,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useUserContext } from "@/context/UserContext"
 
 interface ChecklistItem {
   id: string
@@ -57,6 +59,7 @@ const categoryIcons: Record<string, typeof AlertTriangle> = {
 export function Checklist() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(initialChecklist)
   const [currentCategory, setCurrentCategory] = useState<string>("Safety First")
+  const { toggleChecklistItem, setHasInjuries, hasInjuries, setChecklistProgress } = useUserContext()
 
   const currentCategoryIndex = categories.indexOf(currentCategory)
   const currentCategoryItems = checklist.filter((item) => item.category === currentCategory)
@@ -64,12 +67,26 @@ export function Checklist() {
   const totalCount = checklist.length
   const progressPercentage = (completedCount / totalCount) * 100
 
+  useEffect(() => {
+    setChecklistProgress(progressPercentage)
+  }, [progressPercentage])
+
   const toggleItem = (id: string) => {
     setChecklist((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
+      prev.map((item) => {
+        if (item.id === id) {
+          toggleChecklistItem(id, !item.completed)
+          return { ...item, completed: !item.completed }
+        }
+        return item
+      })
     )
+  }
+
+  const resetAll = () => {
+    setChecklist(initialChecklist.map((item) => ({ ...item, completed: false })))
+    initialChecklist.forEach((item) => toggleChecklistItem(item.id, false))
+    setHasInjuries(null)
   }
 
   const goToNextCategory = () => {
@@ -103,15 +120,53 @@ export function Checklist() {
           </p>
         </div>
 
+        {/* Injury question */}
+        <Card className="mb-6 border-2 border-red-200 bg-red-50 shadow-md">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <HeartPulse className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+              <div className="flex-1">
+                <p className="font-semibold text-red-900">Were any injuries reported at the scene?</p>
+                <p className="mb-4 text-sm text-red-700">This helps us recommend the right services for you.</p>
+                <div className="flex gap-3">
+                  <Button
+                    size="sm"
+                    variant={hasInjuries === true ? "default" : "outline"}
+                    className={hasInjuries === true ? "bg-red-600 hover:bg-red-700 text-white border-red-600" : "border-red-300 text-red-700 hover:bg-red-100"}
+                    onClick={() => setHasInjuries(hasInjuries === true ? null : true)}
+                  >
+                    Yes, injuries occurred
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={hasInjuries === false ? "default" : "outline"}
+                    className={hasInjuries === false ? "bg-green-600 hover:bg-green-700 text-white border-green-600" : "border-red-300 text-red-700 hover:bg-red-100"}
+                    onClick={() => setHasInjuries(hasInjuries === false ? null : false)}
+                  >
+                    No injuries
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="mb-8 border-2 border-primary/20 shadow-md">
           <CardContent className="pt-6">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">
                 Overall Progress
               </span>
-              <span className="text-sm font-semibold text-primary">
-                {completedCount} of {totalCount} completed
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-semibold text-primary">
+                  {completedCount} of {totalCount} completed
+                </span>
+                {completedCount > 0 && (
+                  <Button size="sm" variant="outline" onClick={resetAll} className="h-7 px-2 text-xs text-muted-foreground">
+                    Deselect All
+                  </Button>
+                )}
+              </div>
             </div>
             <Progress value={progressPercentage} className="h-3" />
             {completedCount === totalCount && (

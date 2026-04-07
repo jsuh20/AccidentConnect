@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Select } from "@/components/ui/select"
+import { useUserContext } from "@/context/UserContext"
 
 interface StateInfo {
   name: string
@@ -1588,6 +1589,12 @@ export function StateGuidance() {
   const [selectedState, setSelectedState] = useState<string>("CA")
   const [activeTab, setActiveTab] = useState<string>("requirements")
   const stateInfo = stateData[selectedState]
+  const { setSelectedState: setContextState } = useUserContext()
+
+  function handleStateChange(state: string) {
+    setSelectedState(state)
+    setContextState(state)
+  }
 
   return (
     <div className="min-h-screen bg-muted/30 py-12">
@@ -1623,7 +1630,7 @@ export function StateGuidance() {
               <div className="w-full md:w-64">
                 <Select
                   value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
+                  onChange={(e) => handleStateChange(e.target.value)}
                   options={states}
                 />
               </div>

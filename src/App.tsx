@@ -5,6 +5,7 @@ import { Checklist } from "./pages/Checklist"
 import { FindProviders } from "./pages/FindProviders"
 import { StateGuidance } from "./pages/StateGuidance"
 import { NotFound } from "./pages/NotFound"
+import { UserContextProvider } from "./context/UserContext"
 
 const router = createBrowserRouter([
   {
@@ -21,5 +22,9 @@ const router = createBrowserRouter([
 ])
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <UserContextProvider>
+      <RouterProvider router={router} />
+    </UserContextProvider>
+  )
 }

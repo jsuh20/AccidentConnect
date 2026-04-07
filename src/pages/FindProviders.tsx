@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
 import {
   Search,
   MapPin,
@@ -20,6 +21,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { useUserContext } from "@/context/UserContext"
 
 interface Review {
   author: string
@@ -100,14 +102,27 @@ const typeColors: Record<string, string> = {
 }
 
 export function FindProviders() {
+  const [searchParams] = useSearchParams()
   const [providers, setProviders] = useState<Provider[]>(mockProviders)
-  const [selectedType, setSelectedType] = useState<string>("all")
+  const [selectedType, setSelectedType] = useState<string>(searchParams.get("type") ?? "all")
   const [searchZip, setSearchZip] = useState<string>("")
   const [sortBy, setSortBy] = useState<string>("distance")
   const [reviewModalId, setReviewModalId] = useState<string | null>(null)
   const [newAuthor, setNewAuthor] = useState<string>("")
   const [newRating, setNewRating] = useState<number>(5)
   const [newComment, setNewComment] = useState<string>("")
+  const { setSelectedProviderType } = useUserContext()
+
+  useEffect(() => {
+    const typeFromUrl = searchParams.get("type") ?? "all"
+    setSelectedType(typeFromUrl)
+    setSelectedProviderType(typeFromUrl)
+  }, [searchParams])
+
+  function handleTypeChange(type: string) {
+    setSelectedType(type)
+    setSelectedProviderType(type)
+  }
 
   function openModal(id: string) {
     setReviewModalId(id)
@@ -167,7 +182,7 @@ export function FindProviders() {
                 </label>
                 <Select
                   value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  onChange={(e) => handleTypeChange(e.target.value)}
                   options={providerTypes}
                 />
               </div>
@@ -215,7 +230,7 @@ export function FindProviders() {
             <button
               key={type.value}
               type="button"
-              onClick={() => setSelectedType(type.value)}
+              onClick={() => handleTypeChange(type.value)}
               className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-medium transition-all ${
                 selectedType === type.value
                   ? "border-primary bg-primary text-primary-foreground"
