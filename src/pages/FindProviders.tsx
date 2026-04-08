@@ -36,6 +36,7 @@ interface Provider {
   rating: number
   reviewCount: number
   phone: string
+  email: string
   address: string
   city: string
   state: string
@@ -50,29 +51,29 @@ interface Provider {
 }
 
 const mockProviders: Provider[] = [
-  { id: "1", name: "QuickTow 24/7 Emergency Service", type: "towing", rating: 4.9, reviewCount: 342, phone: "(555) 123-4567", address: "123 Main St", city: "Springfield", state: "CA", zipCode: "90210", distance: 2.3, verified: true, featured: true, specialties: ["Emergency Towing", "Flatbed", "Heavy Duty"], openNow: true, responseTime: "15-20 min", reviews: [
-    { author: "Marcus T.", rating: 5, comment: "Showed up in under 15 minutes after my accident on the highway. Driver was professional and careful with my car. Highly recommend!" },
-    { author: "Diane R.", rating: 5, comment: "Called at 2am and they were there within 20 minutes. Fair pricing and very courteous. Will definitely use again." },
+  { id: "1", name: "United Carrier Towing Services", type: "towing", rating: 4.8, reviewCount: 214, phone: "(213) 747-2868", email: "dispatch@unitedcarriertowing.com", address: "1823 S Hope St", city: "Los Angeles", state: "CA", zipCode: "90015", distance: 0.8, verified: true, featured: true, specialties: ["Emergency Towing", "Flatbed Towing", "Roadside Assistance"], openNow: true, responseTime: "15-20 min", reviews: [
+    { author: "Marcus T.", rating: 5, comment: "Called them after a fender bender near USC. Arrived in under 20 minutes and handled everything professionally. Highly recommend!" },
+    { author: "Diane R.", rating: 5, comment: "Called at 2am and they were there quickly. Fair pricing and very courteous. Will definitely use again." },
   ]},
-  { id: "2", name: "Premier Auto Body & Collision", type: "bodyshop", rating: 4.8, reviewCount: 567, phone: "(555) 234-5678", address: "456 Oak Ave", city: "Springfield", state: "CA", zipCode: "90211", distance: 3.1, verified: true, featured: true, specialties: ["Insurance Claims", "Paint & Body", "Frame Repair"], openNow: true, responseTime: "Same day estimates", reviews: [
-    { author: "Sandra K.", rating: 5, comment: "My car looks brand new after the repair. They handled all the insurance paperwork and kept me updated throughout the process." },
-    { author: "James L.", rating: 4, comment: "Great quality work. Took a few extra days but the paint match was perfect. Worth the wait." },
+  { id: "2", name: "Auto Collision Group – Los Angeles", type: "bodyshop", rating: 4.7, reviewCount: 389, phone: "(323) 405-4300", email: "service@autoacg.com", address: "3766 S Main St", city: "Los Angeles", state: "CA", zipCode: "90007", distance: 0.5, verified: true, featured: true, specialties: ["Collision Repair", "Tesla Certified", "Paint & Refinishing"], openNow: true, responseTime: "Same-day estimates", reviews: [
+    { author: "Sandra K.", rating: 5, comment: "My car looks brand new after the repair. They handled all the insurance paperwork and kept me updated throughout." },
+    { author: "James L.", rating: 4, comment: "Great quality work. Tesla-certified shop which gave me confidence. Paint match was perfect." },
   ]},
-  { id: "3", name: "Johnson & Associates Law Firm", type: "attorney", rating: 4.9, reviewCount: 189, phone: "(555) 345-6789", address: "789 Legal Plaza", city: "Springfield", state: "CA", zipCode: "90212", distance: 4.5, verified: true, featured: false, specialties: ["Personal Injury", "Car Accidents", "Insurance Disputes"], openNow: false, responseTime: "24hr consultation", reviews: [
-    { author: "Patricia M.", rating: 5, comment: "Attorney Johnson fought hard for my settlement after a rear-end collision. I received 3x more than the insurance company's first offer." },
-    { author: "Robert H.", rating: 5, comment: "Very responsive and kept me informed every step of the way. Settled my case in 4 months. Exceptional service." },
+  { id: "3", name: "Law Offices of Jacob Emrani", type: "attorney", rating: 4.9, reviewCount: 512, phone: "(888) 952-2952", email: "info@calljacob.com", address: "714 W Olympic Blvd, Suite 300", city: "Los Angeles", state: "CA", zipCode: "90015", distance: 1.5, verified: true, featured: true, specialties: ["Car Accident Claims", "Personal Injury", "Insurance Disputes"], openNow: true, responseTime: "24/7 consultation", reviews: [
+    { author: "Patricia M.", rating: 5, comment: "Attorney Emrani fought hard for my settlement after a rear-end collision. I received far more than the insurance company's first offer." },
+    { author: "Robert H.", rating: 5, comment: "Very responsive and kept me informed every step of the way. No fee unless they win. Exceptional service." },
   ]},
-  { id: "4", name: "Springfield Medical Center - Urgent Care", type: "medical", rating: 4.7, reviewCount: 823, phone: "(555) 456-7890", address: "321 Health Blvd", city: "Springfield", state: "CA", zipCode: "90213", distance: 1.8, verified: true, featured: true, specialties: ["Accident Injuries", "X-Ray on Site", "Workers Comp"], openNow: true, responseTime: "Walk-ins welcome", reviews: [
-    { author: "Angela W.", rating: 5, comment: "Got checked out here right after my accident. X-rays were done on site and the staff was compassionate and thorough." },
+  { id: "4", name: "H. Claude Hudson Health Center", type: "medical", rating: 4.6, reviewCount: 308, phone: "(213) 699-7000", email: "info@hudsonhealthcenter.com", address: "2829 S Grand Ave", city: "Los Angeles", state: "CA", zipCode: "90007", distance: 0.4, verified: true, featured: true, specialties: ["Walk-in Urgent Care", "Accident Injuries", "Comprehensive Health"], openNow: true, responseTime: "Walk-ins welcome", reviews: [
+    { author: "Angela W.", rating: 5, comment: "Got checked out right after my accident. Staff was compassionate and thorough. Close to USC which was very convenient." },
     { author: "Kevin B.", rating: 4, comment: "Short wait time and the doctor took my neck pain seriously. Documented everything I needed for my insurance claim." },
   ]},
-  { id: "5", name: "Elite Rental Cars", type: "rental", rating: 4.6, reviewCount: 445, phone: "(555) 567-8901", address: "654 Commerce Dr", city: "Springfield", state: "CA", zipCode: "90214", distance: 2.7, verified: true, featured: false, specialties: ["Insurance Replacements", "Same-Day Pickup", "Long-Term Rates"], openNow: true, responseTime: "2hr pickup", reviews: [
-    { author: "Lisa N.", rating: 5, comment: "Coordinated directly with my insurance for a replacement vehicle. Had a clean car ready within 2 hours of my accident." },
-    { author: "Tom G.", rating: 4, comment: "Good selection of vehicles and competitive rates. Staff was helpful explaining the insurance replacement process." },
+  { id: "5", name: "Enterprise Rent-A-Car – S Figueroa", type: "rental", rating: 4.5, reviewCount: 621, phone: "(213) 746-6654", email: "branch.la007@enterprise.com", address: "1944 S Figueroa St", city: "Los Angeles", state: "CA", zipCode: "90007", distance: 0.3, verified: true, featured: false, specialties: ["Insurance Replacements", "Same-Day Pickup", "USC Preferred Partner"], openNow: true, responseTime: "Ready within 1 hour", reviews: [
+    { author: "Lisa N.", rating: 5, comment: "Coordinated directly with my insurance for a replacement vehicle. Had a clean car ready within an hour of my accident." },
+    { author: "Tom G.", rating: 4, comment: "Great selection and competitive rates. Staff was helpful explaining the insurance replacement process." },
   ]},
-  { id: "6", name: "Reliable Towing Services", type: "towing", rating: 4.5, reviewCount: 234, phone: "(555) 678-9012", address: "987 Industrial Way", city: "Springfield", state: "CA", zipCode: "90215", distance: 5.2, verified: true, featured: false, specialties: ["24/7 Service", "Motorcycle Towing", "Lockout Service"], openNow: true, responseTime: "20-30 min", reviews: [
-    { author: "Chris P.", rating: 5, comment: "Towed my motorcycle after a slide on the freeway. They handled it with great care and arrived faster than expected." },
-    { author: "Maria S.", rating: 4, comment: "Reliable and honest pricing. Driver helped me stay calm after a stressful accident. Would recommend to anyone." },
+  { id: "6", name: "Network Auto Body Inc.", type: "bodyshop", rating: 4.6, reviewCount: 178, phone: "(323) 232-8800", email: "info@networkautobody.com", address: "3917 S Broadway", city: "Los Angeles", state: "CA", zipCode: "90037", distance: 1.2, verified: true, featured: false, specialties: ["Structural Repair", "OEM Certified", "Insurance Assistance"], openNow: false, responseTime: "Same-day estimates", reviews: [
+    { author: "Chris P.", rating: 5, comment: "35+ years in business and it shows. My car came back looking perfect and they handled all the insurance back-and-forth." },
+    { author: "Maria S.", rating: 4, comment: "Reliable and honest pricing. Kia and Infiniti certified which was great for my car. Would recommend." },
   ]},
 ]
 
@@ -372,15 +373,15 @@ export function FindProviders() {
                         + Add Review
                       </Button>
                       <div className="flex gap-3 lg:flex-col">
-                        <Button className="flex-1">
+                        <Button className="flex-1" onClick={() => window.location.href = `tel:${provider.phone}`}>
                           <Phone className="mr-2 h-4 w-4" />
                           Call Now
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="flex-1" onClick={() => window.location.href = `mailto:${provider.email}`}>
                           <Mail className="mr-2 h-4 w-4" />
                           Email
                         </Button>
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="flex-1" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${provider.name} ${provider.address} ${provider.city} ${provider.state}`)}`, "_blank")}>
                           <ExternalLink className="mr-2 h-4 w-4" />
                           Details
                         </Button>
