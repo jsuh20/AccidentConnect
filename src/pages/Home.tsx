@@ -13,8 +13,12 @@ import {
 } from "lucide-react"
 import { ButtonLink } from "@/components/ButtonLink"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useABTest } from "@/lib/ab"
 
 export function Home() {
+  const heroAB = useABTest("home_hero_v1", { variants: ["A", "B"] as const })
+  const isB = heroAB.variant === "B"
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
@@ -29,11 +33,12 @@ export function Home() {
                 </span>
               </div>
               <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
-                Stay Calm. We'll Guide You Through It.
+                {isB ? "Accident help in minutes — not hours." : "Stay Calm. We'll Guide You Through It."}
               </h1>
               <p className="mb-8 max-w-xl text-xl text-blue-100">
-                Been in an accident? Get immediate step-by-step guidance and
-                connect with trusted local professionals—all in one place.
+                {isB
+                  ? "Get step-by-step guidance and connect with trusted local providers—fast."
+                  : "Been in an accident? Get immediate step-by-step guidance and connect with trusted local professionals—all in one place."}
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <ButtonLink
@@ -41,18 +46,20 @@ export function Home() {
                   variant="hero"
                   size="lg"
                   className="w-full sm:w-auto"
+                  onClick={() => heroAB.trackConversion("hero_primary_cta")}
                 >
                   <ClipboardCheck className="mr-2 h-5 w-5" />
-                  Start Accident Checklist
+                  {isB ? "Start in 60 seconds" : "Start Accident Checklist"}
                 </ButtonLink>
                 <ButtonLink
                   to="/find-providers"
                   variant="heroOutline"
                   size="lg"
                   className="w-full sm:w-auto"
+                  onClick={() => heroAB.trackConversion("hero_secondary_cta")}
                 >
                   <Users className="mr-2 h-5 w-5" />
-                  Find Local Help
+                  {isB ? "Find help near me" : "Find Local Help"}
                 </ButtonLink>
               </div>
               <div className="mt-8 flex items-center gap-2 text-blue-100">
