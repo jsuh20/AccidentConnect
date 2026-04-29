@@ -381,10 +381,15 @@ export function FindProviders() {
                           <Mail className="mr-2 h-4 w-4" />
                           Email
                         </Button>
-                        <Button variant="outline" className="flex-1" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${provider.name} ${provider.address} ${provider.city} ${provider.state}`)}`, "_blank")}>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${provider.name} ${provider.address} ${provider.city} ${provider.state}`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex flex-1 items-center justify-center rounded-md border border-input bg-transparent px-4 py-2 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground"
+                        >
                           <ExternalLink className="mr-2 h-4 w-4" />
                           Details
-                        </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
