@@ -48,7 +48,7 @@ export function Navigation() {
               {link.label}
             </Link>
           ))}
-          <Button className="ml-4 text-base" size="sm">
+          <Button className="ml-4 text-base" size="sm" onClick={() => window.location.href = "tel:911"}>
             Emergency Help
           </Button>
         </div>
@@ -85,7 +85,7 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
-            <Button className="mx-4 mt-2 text-base" size="sm">
+            <Button className="mx-4 mt-2 text-base" size="sm" onClick={() => window.location.href = "tel:911"}>
               Emergency Help
             </Button>
           </div>
