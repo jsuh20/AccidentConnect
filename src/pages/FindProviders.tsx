@@ -399,11 +399,6 @@ export function FindProviders() {
           })}
         </div>
 
-        <div className="mt-8 text-center">
-          <Button variant="outline" size="lg">
-            Load More Providers
-          </Button>
-        </div>
       </div>
 
       {reviewModalId && (
